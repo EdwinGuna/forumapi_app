@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const pool = require('../../database/postgres/pool');
 const createServer = require('../createServer');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
@@ -6,10 +7,10 @@ const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelp
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 const container = require('../../container');
 const ServerTestHelper = require('../../../../tests/ServerTestHelper');
-const bcrypt = require('bcrypt');
 
 describe('/replies endpoint', () => {
-  let accessToken, userId, username;
+  let accessToken; let userId; let
+    username;
   let threadId;
   let commentId;
 
@@ -22,8 +23,8 @@ describe('/replies endpoint', () => {
 
     const user1 = await ServerTestHelper.getAccessToken({
       id: 'user-123',
-      username: 'testuser',        
-    })
+      username: 'testuser',
+    });
 
     accessToken = user1.accessToken;
     userId = user1.userId;
@@ -122,29 +123,28 @@ describe('/replies endpoint', () => {
         password: hashedPassword,
         fullname: 'Default User',
       });
-    
+
       await ThreadsTableTestHelper.addThread({
         id: 'thread-234',
         title: 'Thread Default',
         body: 'Thread ini untuk default test',
         owner: 'user-123',
       });
-    
+
       await CommentsTableTestHelper.addComment({
         id: 'comment-123',
         threadId: 'thread-234',
         content: 'Komentar default',
         owner: 'user-123',
       });
-    
+
       await RepliesTableTestHelper.addReply();
-    
+
       const result = await RepliesTableTestHelper.findReplyById('reply-123');
       expect(result).toHaveLength(1);
       expect(result[0].comment_id).toBe('comment-123');
       expect(result[0].owner).toBe('user-123');
     });
-    
   });
 
   describe('DELETE /threads/{threadId}/comments/{commentId}/replies/{replyId}', () => {

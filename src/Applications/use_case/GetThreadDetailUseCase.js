@@ -4,12 +4,13 @@ const ThreadDetail = require('../../Domains/threads/entities/ThreadDetail');
 const { mapDBToReplyModel, mapDBToCommentModel, mapDBToThreadModel } = require('../../Infrastructures/utils');
 
 class GetThreadDetailUseCase {
-  constructor({ threadRepository, commentRepository, replyRepository, likeRepository }) {
+  constructor({
+    threadRepository, commentRepository, replyRepository, likeRepository,
+  }) {
     this._threadRepository = threadRepository;
     this._commentRepository = commentRepository;
     this._replyRepository = replyRepository;
-  
-  }  
+  }
 
   async execute({ threadId }) {
     const thread = await this._threadRepository.getThreadById(threadId);

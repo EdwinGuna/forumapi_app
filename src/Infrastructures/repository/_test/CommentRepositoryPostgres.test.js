@@ -252,12 +252,12 @@ describe('CommentRepositoryPostgres', () => {
   describe('verifyCommentBelongsToThread', () => {
     it('should throw NotFoundError when comment does not belong to thread', async () => {
       const repo = new CommentRepositoryPostgres(pool, () => '123');
-    
+
       // Masukkan data dummy jika belum ada di test DB
       await expect(repo.verifyCommentBelongsToThread('comment-x', 'thread-y'))
         .rejects.toThrow(NotFoundError);
-    }); 
-    
+    });
+
     it('should not throw error if comment belongs to thread', async () => {
       // Arrange
       await UsersTableTestHelper.addUser({ id: 'user-123' });
@@ -280,5 +280,5 @@ describe('CommentRepositoryPostgres', () => {
         commentRepo.verifyCommentBelongsToThread('comment-123', 'thread-123'),
       ).resolves.not.toThrow();
     });
-  })
+  });
 });

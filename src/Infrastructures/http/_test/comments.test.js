@@ -11,7 +11,8 @@ const container = require('../../container');
 const ServerTestHelper = require('../../../../tests/ServerTestHelper');
 
 describe('Comments Endpoints', () => {
-  let server, accessToken, userId, username;
+  let server; let accessToken; let userId; let
+    username;
 
   beforeAll(async () => {
     server = await createServer(container);
@@ -23,7 +24,7 @@ describe('Comments Endpoints', () => {
       id: 'user-123',
       username: 'dicoding',
     });
-    
+
     accessToken = user.accessToken;
     userId = user.userId;
     username = user.username;
@@ -39,7 +40,6 @@ describe('Comments Endpoints', () => {
 
   beforeEach(async () => {
     await CommentsTableTestHelper.cleanTable();
-   
   });
 
   afterEach(async () => {
@@ -52,7 +52,6 @@ describe('Comments Endpoints', () => {
       owner: userId,
     });
   });
-
 
   afterAll(async () => {
     await CommentsTableTestHelper.cleanTable();
@@ -143,7 +142,6 @@ describe('Comments Endpoints', () => {
     });
 
     it('should throw THREAD_NOT_FOUND error when adding comment to non-existent thread', async () => {
-     
       await expect(CommentsTableTestHelper.addComment({
         threadId: 'nonexistent-thread',
         content: 'Comment for invalid thread',

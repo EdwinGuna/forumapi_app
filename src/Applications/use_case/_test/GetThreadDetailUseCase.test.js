@@ -12,7 +12,7 @@ describe('GetThreadDetailUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
     const mockReplyRepository = new RepliesRepository();
-    
+
     const threadId = 'thread-123';
     const commentId = 'comment-456';
     const replyId = 'reply-789';
@@ -62,13 +62,12 @@ describe('GetThreadDetailUseCase', () => {
 
     mockReplyRepository.getRepliesByCommentId = jest.fn()
       .mockImplementation((replycommentId) => Promise.resolve(expectedReplies.filter((r) => r.comment_id === replycommentId)));
-    
-    
+
     const getThreadDetailUseCase = new GetThreadDetailUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
       replyRepository: mockReplyRepository, // Pastikan ini digunakan
-      
+
     });
 
     // Action
@@ -88,7 +87,7 @@ describe('GetThreadDetailUseCase', () => {
           date: '2021-08-08T07:59:18.982Z',
           username: 'dicoding',
           isDeleted: true,
-          
+
           replies: [
             new ReplyDetail({
               id: replyId,
@@ -121,7 +120,7 @@ describe('GetThreadDetailUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
     const mockReplyRepository = new RepliesRepository();
-    
+
     mockThreadRepository.getThreadById = jest.fn().mockResolvedValue({
       id: threadId,
       title: 'Judul',
@@ -142,12 +141,11 @@ describe('GetThreadDetailUseCase', () => {
 
     mockReplyRepository.getRepliesByCommentId = jest.fn().mockResolvedValue(undefined); // <- bikin coverage nambah
 
-    
     const useCase = new GetThreadDetailUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
       replyRepository: mockReplyRepository,
-      
+
     });
 
     const result = await useCase.execute({ threadId });

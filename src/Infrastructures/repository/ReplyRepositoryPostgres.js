@@ -15,7 +15,7 @@ class RepliesRepositoryPostgres extends RepliesRepository {
     commentId, content, owner, date, isDeleted,
   }) {
     const id = `reply-${this._idGenerator()}`;
-  
+
     const query = {
       text: `INSERT INTO replies (id, comment_id, content, owner, date, is_deleted) 
              VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, content, owner, comment_id AS "commentId"`,
