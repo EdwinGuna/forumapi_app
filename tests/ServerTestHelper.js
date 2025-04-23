@@ -43,6 +43,7 @@ const ServerTestHelper = {
       const userResJson = JSON.parse(userResponse.payload);
       registeredUserId = userResJson.data.addedUser.id;
     } else if (userResponse.statusCode === 400 && userResponse.payload.includes('username')) {
+      await new Promise(resolve => setTimeout(resolve, 100)); // delay 100ms
       const result = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
       registeredUserId = result.rows[0].id;
     } else {
