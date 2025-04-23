@@ -9,7 +9,7 @@ const GetThreadDetailUseCase = require('../../../Applications/use_case/GetThread
 const ServerTestHelper = require('../../../../tests/ServerTestHelper');
 
 describe('/threads endpoint', () => {
-  let accessToken; userId; username;
+  let accessToken, userId, username;
 
   beforeAll(async () => {
     // Clean up users table and create user via ServerTestHelper

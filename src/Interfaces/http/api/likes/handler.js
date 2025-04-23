@@ -1,25 +1,22 @@
-const AddUserUseCase = require('../../../../Applications/use_case/AddUserUseCase');
+const ToggleLikeUseCase = require('../../../../Applications/use_case/ToggleLikeUseCase');
 
-class UsersHandler {
-  constructor(container) {
-    this._container = container;
+class LikeHandler {
+    constructor(container) {
+        this._container = container;
+        this.putLikeHandler = this.putLikeHandler.bind(this);
+    }
 
-    this.postUserHandler = this.postUserHandler.bind(this);
-  }
+    async putLikeHandler(request, h) {
+        const { commentId, threadId } = request.params;
+        const { id: owner } = request.auth.credentials;
 
-  async postUserHandler(request, h) {
-    const addUserUseCase = this._container.getInstance(AddUserUseCase.name);
-    const addedUser = await addUserUseCase.execute(request.payload);
+        const toggleLikeUseCase = this._container.getInstance(ToggleLikeUseCase.name);
+        await toggleLikeUseCase.execute({ threadId, commentId, owner });
 
-    const response = h.response({
-      status: 'success',
-      data: {
-        addedUser,
-      },
-    });
-    response.code(201);
-    return response;
-  }
+        return {
+            status : 'success',
+        };
+    }
 }
 
-module.exports = UsersHandler;
+module.exports = LikeHandler;
