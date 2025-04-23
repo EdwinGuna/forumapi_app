@@ -10,6 +10,7 @@ class GetThreadDetailUseCase {
     this._threadRepository = threadRepository;
     this._commentRepository = commentRepository;
     this._replyRepository = replyRepository;
+    this._likeRepository = likeRepository;
   }
 
   async execute({ threadId }) {
@@ -21,14 +22,21 @@ class GetThreadDetailUseCase {
       comments.map((comment) => this._replyRepository.getRepliesByCommentId(comment.id)),
     );
 
+    const likeCounts = await Promise.all(
+      comments.map((comment) => this._likeRepository.getLikeCountByCommentId(comment.id)),
+    );
+
     const enrichedComments = comments.map((comment, index) => {
       const replies = (repliesArray[index] || []).map((reply) => {
         const mapped = mapDBToReplyModel(reply);
         return new ReplyDetail(mapped);
       });
 
+      const likeCount = likeCounts[index];
+
       return new CommentDetail({
         ...mapDBToCommentModel(comment),
+        likeCount,
         replies,
       });
     });
