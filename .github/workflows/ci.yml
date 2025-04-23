@@ -1,14 +1,9 @@
 name: Continuous Integration
  
-on:
-  push:
-    branches:
-      - master
-      - feature-*
+on: 
   pull_request:
     branches:
       - master
-      - feature-*
  
 jobs:
   test:
