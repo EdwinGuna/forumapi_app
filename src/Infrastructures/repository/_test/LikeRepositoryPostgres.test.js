@@ -1,4 +1,4 @@
-const pool = require('../../../Infrastructures/database/postgres/pool');
+const pool = require('../../database/postgres/pool');
 const LikesTableTestHelper = require('../../../../tests/LikesTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
@@ -15,10 +15,12 @@ describe('LikeRepositoryPostgres', () => {
     await UsersTableTestHelper.cleanTable();
 
     await UsersTableTestHelper.addUser({ id: 'user-123' });
-    await ThreadsTableTestHelper.addThread({ id: 'thread-123', title: 'ini sebuah thread', body: 'body sebuah thread', owner: 'user-123' });
+    await ThreadsTableTestHelper.addThread({
+      id: 'thread-123', title: 'ini sebuah thread', body: 'body sebuah thread', owner: 'user-123',
+    });
     await CommentsTableTestHelper.addComment({ id: 'comment-123', threadId: 'thread-123', owner: 'user-123' });
-  });  
-  
+  });
+
   afterEach(async () => {
     await LikesTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
@@ -50,13 +52,12 @@ describe('LikeRepositoryPostgres', () => {
       };
 
       const likeRepository = new LikeRepositoryPostgres(fakePool);
-    
+
       // Action & Assert
       await expect(likeRepository.likeComment('comment-xxx', 'user-xxx'))
         .rejects
         .toThrowError(InvariantError);
     });
-    
   });
 
   describe('unlikeComment function', () => {
@@ -96,7 +97,7 @@ describe('LikeRepositoryPostgres', () => {
   describe('getLikeCountByCommentId function', () => {
     it('should return correct like count', async () => {
       await UsersTableTestHelper.addUser({ id: 'user-456', username: 'johndoe' });
-      
+
       await LikesTableTestHelper.addLike({ id: 'like-1', commentId: 'comment-123', owner: 'user-123' });
       await LikesTableTestHelper.addLike({ id: 'like-2', commentId: 'comment-123', owner: 'user-456' });
 
