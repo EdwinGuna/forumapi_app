@@ -22,7 +22,7 @@ const CommentRepositoryPostgres = require('./repository/CommentRepositoryPostgre
 const RepliesRepository = require('../Domains/replies/RepliesRepository');
 const ReplyRepositoryPostgres = require('./repository/ReplyRepositoryPostgres');
 const LikeRepository = require('../Domains/likes/LikeRepository');
-const LikeRepositoryPostgres = require('../Infrastructures/repository/LikeRepositoryPostgres');
+const LikeRepositoryPostgres = require('./repository/LikeRepositoryPostgres');
 
 // use case
 const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');

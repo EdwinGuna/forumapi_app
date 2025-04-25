@@ -11,7 +11,8 @@ const container = require('../../container');
 const ServerTestHelper = require('../../../../tests/ServerTestHelper');
 
 describe('Comments Endpoints', () => {
-  let server, accessToken, userId, username;
+  let server; let accessToken; let userId; let
+    username;
 
   beforeAll(async () => {
     server = await createServer(container);

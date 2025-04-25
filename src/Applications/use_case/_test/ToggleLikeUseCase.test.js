@@ -12,7 +12,6 @@ describe('ToggleLikeUseCase', () => {
     const mockUserRepository = {
       verifyUserExist: jest.fn().mockResolvedValue(),
     };
-    
 
     const mockLikeRepository = {
       isCommentLiked: jest.fn().mockResolvedValue(false),
@@ -28,7 +27,7 @@ describe('ToggleLikeUseCase', () => {
     const toggleLikeUseCase = new ToggleLikeUseCase({
       likeRepository: mockLikeRepository,
       commentRepository: mockCommentRepository,
-      userRepository: mockUserRepository
+      userRepository: mockUserRepository,
     });
 
     // Action
@@ -70,7 +69,7 @@ describe('ToggleLikeUseCase', () => {
     const toggleLikeUseCase = new ToggleLikeUseCase({
       likeRepository: mockLikeRepository,
       commentRepository: mockCommentRepository,
-      userRepository: mockUserRepository
+      userRepository: mockUserRepository,
     });
 
     // Action
