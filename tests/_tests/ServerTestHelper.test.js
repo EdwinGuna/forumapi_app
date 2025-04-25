@@ -99,4 +99,29 @@ describe('ServerTestHelper (mocked)', () => {
     expect(result).toHaveProperty('accessToken', 'default-access-token');
     expect(result).toHaveProperty('userId', 'user-default');
   });
+
+  it('should throw error if username not found in database after 400 response', async () => {
+    // Mock inject() supaya return 400 dan mengandung kata 'username'
+    jest.resetModules();
+    jest.doMock('../../src/Infrastructures/http/createServer', () => {
+      return () => ({
+        inject: jest.fn().mockResolvedValue({
+          statusCode: 400,
+          payload: 'username already exists',
+        }),
+      });
+    });
+  
+    const pool = require('../../src/Infrastructures/database/postgres/pool');
+    const ServerTestHelper = require('../ServerTestHelper');
+  
+    // Mock pool.query agar return rowCount = 0
+    jest.spyOn(pool, 'query').mockResolvedValueOnce({ rowCount: 0, rows: [] });
+  
+    await expect(ServerTestHelper.getAccessToken({ username: 'existinguser' }))
+      .rejects.toThrow('User with username "existinguser" not found in database after creation attempt.');
+  
+    pool.query.mockRestore();
+  });
+  
 });
