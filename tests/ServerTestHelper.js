@@ -47,17 +47,23 @@ const ServerTestHelper = {
       typeof userResponse.payload === 'string' &&
       userResponse.payload.includes('username')
     ) {
-      // eslint-disable-next-line no-promise-executor-return
-      await new Promise((resolve) => setTimeout(resolve, 300)); // delay 100ms
-      const result = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
+      let attempts = 0;
+      while (attempts < 5) {
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 600)); // delay 100ms
+        const result = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
 
-      if (result.rowCount === 0 ) {
-        throw new Error(`User with username "${username}" not found in database after creation attempt.`);
+        if (result.rowCount > 0 ) {
+          registeredUserId = result.rows[0].id;
+          break;    
+        }
+
+        attempts ++;
       }
 
-      registeredUserId = result.rows[0].id;
-    } else {
-      throw new Error('Gagal membuat user untuk test! (accessToken tidak didapatkan)');
+      if (!registeredUserId) {
+        throw new Error(`User with username "${username}" not found in database after creation attempt.`);
+      }
     }
     // Login untuk mendapatkan accessToken
     const loginResponse = await server.inject({
