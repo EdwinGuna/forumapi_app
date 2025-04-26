@@ -21,6 +21,8 @@ const CommentRepository = require('../Domains/comments/CommentRepository');
 const CommentRepositoryPostgres = require('./repository/CommentRepositoryPostgres');
 const RepliesRepository = require('../Domains/replies/RepliesRepository');
 const ReplyRepositoryPostgres = require('./repository/ReplyRepositoryPostgres');
+const LikeRepository = require('../Domains/likes/LikeRepository');
+const LikeRepositoryPostgres = require('./repository/LikeRepositoryPostgres');
 
 // use case
 const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
@@ -33,6 +35,7 @@ const DeleteCommentUseCase = require('../Applications/use_case/DeleteCommentUseC
 const GetThreadDetailUseCase = require('../Applications/use_case/GetThreadDetailUseCase');
 const AddReplyUseCase = require('../Applications/use_case/AddReplyUseCase');
 const DeleteReplyUseCase = require('../Applications/use_case/DeleteReplyUseCase');
+const ToggleLikeUseCase = require('../Applications/use_case/ToggleLikeUseCase');
 
 // creating container
 const container = createContainer();
@@ -116,7 +119,17 @@ container.register([
       ],
     },
   },
-
+  {
+    key: LikeRepository.name,
+    Class: LikeRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool, // dari ./Infrastructures/database/postgres/pool
+        },
+      ],
+    },
+  },
 ]);
 
 // registering use cases
@@ -236,7 +249,7 @@ container.register([
         { name: 'threadRepository', internal: ThreadRepository.name },
         { name: 'commentRepository', internal: CommentRepository.name },
         { name: 'replyRepository', internal: RepliesRepository.name },
-
+        { name: 'likeRepository', internal: LikeRepository.name },
       ],
     },
   },
@@ -265,7 +278,27 @@ container.register([
       ],
     },
   },
-
+  {
+    key: ToggleLikeUseCase.name,
+    Class: ToggleLikeUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'likeRepository',
+          internal: LikeRepository.name,
+        },
+        {
+          name: 'commentRepository',
+          internal: CommentRepository.name, // sudah harus ada sebelumnya
+        },
+        {
+          name: 'userRepository',
+          internal: UserRepository.name, // sudah harus ada sebelumnya
+        },
+      ],
+    },
+  },
 ]);
 
 module.exports = container;
