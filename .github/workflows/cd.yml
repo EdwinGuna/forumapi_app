@@ -19,6 +19,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           cd ~/forumapi_app
+          git reset --hard HEAD
           git pull origin master
           npm install
           npm run migrate up
