@@ -1,6 +1,6 @@
+const bcrypt = require('bcrypt');
 const UsersTableTestHelper = require('../UsersTableTestHelper');
 const pool = require('../../src/Infrastructures/database/postgres/pool');
-const bcrypt = require('bcrypt');
 const ServerTestHelper = require('../ServerTestHelper');
 
 describe('ServerTestHelper (tanpa mock)', () => {
@@ -36,20 +36,18 @@ describe('ServerTestHelper (mocked)', () => {
   beforeAll(() => {
     jest.resetModules(); // penting agar cache createServer hilang
 
-    jest.mock('../../src/Infrastructures/http/createServer', () => {
-      return () => ({
-        inject: jest.fn().mockResolvedValue({
-          statusCode: 500,
-          payload: 'Internal Server Error',
-        }),
-      });
-    });
+    jest.mock('../../src/Infrastructures/http/createServer', () => () => ({
+      inject: jest.fn().mockResolvedValue({
+        statusCode: 500,
+        payload: 'Internal Server Error',
+      }),
+    }));
   });
 
   it('should throw error if user creation fails unexpectedly', async () => {
-    //const ServerTestHelper = require('../ServerTestHelper'); // di-require setelah mock
+    // const ServerTestHelper = require('../ServerTestHelper'); // di-require setelah mock
     await expect(
-      ServerTestHelper.getAccessToken({ id: 'fail-id', username: 'failuser' })
+      ServerTestHelper.getAccessToken({ id: 'fail-id', username: 'failuser' }),
     ).rejects.toThrow('Gagal membuat user untuk test!');
   });
 });
