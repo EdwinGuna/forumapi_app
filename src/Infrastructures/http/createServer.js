@@ -66,7 +66,7 @@ const createServer = async (container) => {
     path: '/',
     handler: (request, h) => h.response({
       status: 'success',
-      message: 'Hello World Of Computing',
+      message: 'Hello, The Exciting World Of Computing!',
     }).code(200),
   });
 
