@@ -40,7 +40,9 @@ const ServerTestHelper = {
       registeredUserId = userResJson.data.addedUser.id;
     } else if (userResponse.statusCode === 400 && userResponse.payload.includes('username')) {
       const result = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
       registeredUserId = result.rows[0].id;
     } else {
       throw new Error('Gagal membuat user untuk test!');
