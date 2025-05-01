@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-const request = require('supertest');
 const { nanoid } = require('nanoid');
 const bcrypt = require('bcrypt');
 const createServer = require('../createServer');
@@ -11,8 +10,7 @@ const container = require('../../container');
 const ServerTestHelper = require('../../../../tests/ServerTestHelper');
 
 describe('Comments Endpoints', () => {
-  let server; let accessToken; let userId; let
-    username;
+  let server; let accessToken; let userId; let username;
 
   beforeAll(async () => {
     server = await createServer(container);
@@ -64,38 +62,53 @@ describe('Comments Endpoints', () => {
     it('should respond with 201 and added comment when payload is valid', async () => {
       if (!accessToken) throw new Error('Access Token tidak tersedia sebelum menguji komentar!');
 
-      const response = await request(server.listener)
-        .post('/threads/thread-123/comments')
-        .set('Authorization', `Bearer ${accessToken}`) // Token yang menghasilkan owner = 'user-123'
-        .send({ content: 'This is a test comment' });
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads/thread-123/comments',
+        payload: { content: 'This is a test comment' },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       expect(response.statusCode).toBe(201);
-      expect(response.body).toHaveProperty('status', 'success');
-      expect(response.body.data.addedComment).toHaveProperty('id');
-      expect(response.body.data.addedComment.content).toEqual('This is a test comment');
-      expect(response.body.data.addedComment.owner).toEqual(userId);
+      const responseJson = JSON.parse(response.payload);
+      expect(responseJson).toHaveProperty('status', 'success');
+      expect(responseJson.data.addedComment).toHaveProperty('id');
+      expect(responseJson.data.addedComment.content).toEqual('This is a test comment');
+      expect(responseJson.data.addedComment.owner).toEqual(userId);
     });
 
     it('should respond with 400 when payload is missing content', async () => {
-      const response = await request(server.listener)
-        .post('/threads/thread-123/comments')
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({});
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads/thread-123/comments',
+        payload: {},
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       expect(response.statusCode).toBe(400);
-      expect(response.body.status).toBe('fail');
-      expect(response.body.message).toBeDefined();
+      const responseJson = JSON.parse(response.payload);
+      expect(responseJson.status).toBe('fail');
+      expect(responseJson.message).toBeDefined();
     });
 
     it('should respond with 404 when thread does not exist', async () => {
-      const response = await request(server.listener)
-        .post('/threads/nonexistent-thread/comments')
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({ content: 'Comment for non-existent thread' });
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads/non-existent-thread/comments',
+        payload: { content: 'Comment for non-existent thread' },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       expect(response.statusCode).toBe(404);
-      expect(response.body.status).toBe('fail');
-      expect(response.body.message).toBeDefined();
+      const responseJson = JSON.parse(response.payload);
+      expect(responseJson.status).toBe('fail');
+      expect(responseJson.message).toBeDefined();
     });
 
     it('should add comment even if id and isDeleted are not provided', async () => {
@@ -180,12 +193,17 @@ describe('Comments Endpoints', () => {
         isDeleted: false,
       });
 
-      const response = await request(server.listener)
-        .delete(`/threads/thread-123/comments/${commentId}`)
-        .set('Authorization', `Bearer ${accessToken}`); // Menghasilkan owner 'user-123'
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/thread-123/comments/${commentId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.status).toBe('success');
+      const responseJson = JSON.parse(response.payload);
+      expect(responseJson.status).toBe('success');
 
       // Verifikasi bahwa komentar telah di-soft delete
       const deletedComment = await CommentsTableTestHelper.getCommentById(commentId);
@@ -212,23 +230,33 @@ describe('Comments Endpoints', () => {
         isDeleted: false,
       });
 
-      const response = await request(server.listener)
-        .delete(`/threads/thread-123/comments/${commentId}`)
-        .set('Authorization', `Bearer ${accessToken}`); // Token untuk 'user-123'
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/thread-123/comments/${commentId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       expect(response.statusCode).toBe(403);
-      expect(response.body.status).toBe('fail');
-      expect(response.body.message).toBeDefined();
+      const responseJson = JSON.parse(response.payload);
+      expect(responseJson.status).toBe('fail');
+      expect(responseJson.message).toBeDefined();
     });
 
     it('should respond with 404 if the comment does not exist', async () => {
-      const response = await request(server.listener)
-        .delete('/threads/thread-123/comments/nonexistent-comment')
-        .set('Authorization', `Bearer ${accessToken}`);
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-123/comments/nonexistent-comment',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       expect(response.statusCode).toBe(404);
-      expect(response.body.status).toBe('fail');
-      expect(response.body.message).toBeDefined();
+      const responseJson = JSON.parse(response.payload);
+      expect(responseJson.status).toBe('fail');
+      expect(responseJson.message).toBeDefined();
     });
   });
 });
