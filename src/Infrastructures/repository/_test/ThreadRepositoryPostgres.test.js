@@ -89,6 +89,7 @@ describe('ThreadRepositoryPostgres', () => {
       expect(thread.id).toEqual('thread-123');
       expect(thread.title).toEqual('Thread Baru');
       expect(thread.body).toEqual('isi thread ini sangat menarik');
+      expect(thread.date.toISOString()).toEqual(expect.any(String));
       expect(thread.username).toEqual('dicoding');
     });
   });
