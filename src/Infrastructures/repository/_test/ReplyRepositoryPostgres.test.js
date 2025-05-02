@@ -201,7 +201,7 @@ describe('RepliesRepositoryPostgres', () => {
       expect(replies[0].commentId).toEqual('comment-123');
       expect(replies[0].content).toEqual('Balasan untuk komentar');
       expect(replies[0].username).toEqual('dicoding');
-      expect(new Date(replies[0].date).toISOString()).toEqual('2025-03-10T08:20:00.000Z');
+      expect(new Date(replies[0].date).getTime()).toEqual(new Date('2025-03-10T08:20:00.000Z').getTime());
     });
 
     it('should return empty array when there are no replies', async () => {
